@@ -1,7 +1,7 @@
 ---
 title: "PF-0953 Programación geoespacial en R<br>Proyecto 01: R - Visualización de datos vectoriales"
-author: "Manuel Vargas"
-date: "2020-10-07"
+author: "Alberto Salazar"
+date: "2020-10-21"
 output:
   html_document:
     theme: readable    
@@ -59,6 +59,7 @@ Realice los siguientes ejercicios de graficación y manejo de datos vectoriales 
 Mediante la función ```names()```, observe las columnas que componen el data frame ```world```.
 ```{r}
 names(world)
+
 ```
 NOTA: recuerde que también puede explorar los datos con funciones como ```str()```, ```summary()``` y ```View()```.
 
@@ -128,19 +129,58 @@ kable_styling()
 ### Ejercicio 6 (15%)
 Con la función ```ggplot()``` del paquete [ggplot2](https://ggplot2.tidyverse.org/), genere un gráfico de barras que muestre la esperanza de vida de los países del continente asiático en los que esa esperanza de vida sea de al menos 80 años. El gráfico debe tener un título, los nombres (o códigos) de los países bajo cada barra, los valores sobre las barras y etiquetas para los ejes x e y.
 ```{r}
+asia_paises_vida <- world[world$continent == "Asia" & world$lifeExp > 80 , ]
+
+ggplot(asia_paises_vida, aes(x=reorder(name_long, -lifeExp), y=lifeExp)) +
+  ggtitle("Países de Asia con Esperanza de vida mayor a 80 años") +
+  xlab("País") + 
+  ylab("Esperanza de vida") +  
+    geom_col() +
+  geom_text(aes(label=lifeExp), vjust=-0.3, size=3.5 )+
+  coord_cartesian(ylim = c(80, 84))
+
 ```
 
 ### Ejercicio 7 (20%)
 Con la función ```plot()``` del paquete [sf](https://cran.r-project.org/web/packages/sf/index.html), genere un [mapa de coropletas](https://en.wikipedia.org/wiki/Choropleth_map) con colores que reflejen la esperanza de vida de los países del continente llamado Oceanía. El mapa debe llevar un título.
 ```{r}
+
+oceania_paises <- world[world$continent == "Oceania" , ]
+plot(oceania_paises["lifeExp"], main="Esperanza de vida en Oceania")
+
 ```
 
 ### Ejercicio 8 (20%)
 Extraiga en un nuevo data frame los países de Centroamérica con esperanza de vida mayor o igual a 74 años y genere el mapa de coropletas, con su título correspondiente.
 ```{r}
+
+ca_paises_vida <-      world[
+                       world$name_long == "Nicaragua" |
+                       world$name_long == "Costa Rica" |
+                       world$name_long == "Panama" , ]
+                       
+plot(ca_paises_vida["lifeExp"], main="Países de CA con esperanza de vida mayor o igual a 74 años")
+
 ```
 
 ### Ejercicio 9 (20%)
 Extraiga en un nuevo data frame los países de América del Sur con área de al menos 2.5 millones de km2 o población de al menos 40 millones de personas y genere un mapa de coropletas para cada variable (i.e. área y población), con sus títulos correspondientes.
 ```{r}
+
+#Para la Variable área
+ams_area <- world[ world$continent == "South America" & world$area_km2 >= 2500000  , ]
+plot(ams_area["area_km2"], main="Países de Amer. del Sur con área superior a 2.5 millones de km2")
+
+#Para la Variable población
+
+ams_pop <- world[ world$continent == "South America" & world$pop >= 40000000  , ]
+plot(ams_pop["pop"], main="Países de Amer. del Sur con población superior a 40 millones")
+
+
+
+
+
+
+
+
 ```
